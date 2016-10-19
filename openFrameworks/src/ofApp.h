@@ -68,5 +68,9 @@ public:
     ofxOscReceiver          receiver;
     ofTrueTypeFont	        font;
 
+    // Haptic tests:
+    void audioOut(float * output, int bufferSize, int nChannels);
+    float                   peakVal;
+    float                   volume; // TODO slider
 };
 

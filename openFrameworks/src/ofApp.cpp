@@ -85,6 +85,7 @@ void ofApp::setup() {
     buffer.writeByte(65); //"A"
     device.send(buffer);  // Request a frame from the Teensy matrix sensor
     bLearnBakground = true;
+    peakVal = 0;
 }
 
 /////////////////////// SERIAL EVENT ///////////////////////
@@ -103,6 +104,8 @@ void ofApp::onSerialBuffer(const SerialBufferEventArgs& args) {
         int sensorID = int (index/2);
         // Do this in the Arduino code to reduce the communication stream (512 bytes to 256 bytes)
         if (value>600) value = 600;
+        if (value > peakVal)
+            peakVal = value;
         storedValueRast[sensorID] = ofMap(value, 0, 600, 0, 255); // 1D array
         if (DEBUG_PRINT){
             cout << "SENSOR_ID : " << sensorID << " ROW :" << value << " MAP : " << int(storedValueRast[sensorID]) << endl;
@@ -291,3 +294,34 @@ void ofApp::buttonModePressedA() {
     bLearnBakground = true;
 }
 
+void ofApp::audioOut(float * output, int bufferSize, int nChannels){
+    const int sampleRate = 44100;
+    const float pan = 0.5f;
+    float leftScale = 1 - pan;
+    float rightScale = pan;
+
+    static float phaseAdder = 0;
+    static float phase = 0;
+
+    // sin (n) seems to have trouble when n is very large, so we
+    // keep phase in the range of 0-TWO_PI like this:
+    while (phase > TWO_PI){
+        phase -= TWO_PI;
+    }
+
+    // Haptic shit
+    float targetFrequency = 750.0f * peakVal/600;
+    peakVal = 0; // consumes (reset) the max value after using it
+    float phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
+
+    const float coef = 0.99;
+    phaseAdder = (1-coef) * phaseAdder + coef * phaseAdderTarget;
+
+    for (int i = 0; i < bufferSize; i++){
+        phase += phaseAdder;
+        float sample = sin(phase);
+        output[i*nChannels    ] = sample * volume * leftScale;
+        output[i*nChannels + 1] = sample * volume * rightScale;
+    }
+
+}
