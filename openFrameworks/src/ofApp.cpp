@@ -310,7 +310,13 @@ void ofApp::audioOut(float * output, int bufferSize, int nChannels){
     }
 
     // Haptic shit
-    float targetFrequency = 750.0f * peakVal/600;
+    static float peakValOld = 0;
+    static float delta = abs(peakVal - peakValOld);
+
+    granularity = 50;                            // TODO test
+    float targetFrequency = granularity * delta; // TODO test
+    peakValOld = peakVal;
+
     peakVal = 0; // consumes (reset) the max value after using it
     float phaseAdderTarget = (targetFrequency / (float) sampleRate) * TWO_PI;
 

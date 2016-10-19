@@ -71,6 +71,7 @@ public:
     // Haptic tests:
     void audioOut(float * output, int bufferSize, int nChannels);
     float                   peakVal;
-    float                   volume; // TODO slider
+    float                   volume;      // TODO slider
+    float                   granularity; // TODO slider
 };
 
