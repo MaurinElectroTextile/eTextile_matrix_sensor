@@ -161,7 +161,7 @@ void ofApp::update() {
         grayImageCopy = grayImage.getPixels();         // Get the pixel value from the image
         p.z = - grayImageCopy[index];                  // Change the z-coordinates
         mesh.setVertex(index, p);                      // Set the new coordinates
-        mesh.setColor(index, ofColor(grayImageCopy[index], 0, 255));    // Change vertex color
+        mesh.setColor(index, ofColor(grayImageCopy[index], 127, 255));    // Change vertex color
     }
     handleOSC();
 }
@@ -210,7 +210,7 @@ void ofApp::draw() {
         ofEndShape(true);
     }
 
-    ofSetLineWidth(1);    // set line width to 1
+    ofSetLineWidth(2);    // set line width
     ofScale(10, 9);
 
     mesh.drawWireframe(); // draws lines
