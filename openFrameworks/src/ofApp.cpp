@@ -296,7 +296,8 @@ void ofApp::buttonModePressedA() {
 
 void ofApp::audioOut(float * output, int bufferSize, int nChannels){
     const int sampleRate = 44100;
-    const float pan = 0.5f;
+    const float volume = 1.0;       // TMP
+    const float pan = 0.5f;         // TMP
     float leftScale = 1 - pan;
     float rightScale = pan;
 
