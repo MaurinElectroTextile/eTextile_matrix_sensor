@@ -2,11 +2,11 @@
   E-TEXTILE MATRIX SENSOR : Copyright (c) 2014 Maurin Donneaud http://etextile.org
   Purpose: 16x16 e-textile sensors matrix
   Licence : GNU GENERAL PUBLIC LICENSE
-  
+
   Programed with Arduino IDE ans Teensy 3.1 support
     Install Teensyduino : http://pjrc.com/teensy/teensyduino.html
     Install PacketSerial : https://github.com/bakercp/PacketSerial
-  
+
   Settings for Arduino IDE
     Board:           Teensy 3.2 / 3.1
     USB Type:        Serial
@@ -68,14 +68,14 @@ const int columnPins[COL] = {
 
 // unsigned long lastFrameTime = 0;
 
-uint8_t myPacket[DATAS];
+volatile uint8_t myPacket[DATAS];
 
-boolean scan = false;
+boolean scan = 1;
 
 void setup() {
   // We must specify a packet handler method so that
-  serial.setPacketHandler(&onPacket);
-  serial.begin( BAUD_RATE );
+//  serial.setPacketHandler(&onPacket);
+//  serial.begin( BAUD_RATE );
 
   analogReadRes( 10 );                     // Set the ADC converteur resolution to 10 bit
   pinMode( LED_PIN, OUTPUT );              // Set rows pins in high-impedance state
@@ -87,20 +87,24 @@ void setup() {
   }
   bootBlink( 9 );
 
-  while ( !Serial.dtr() );                 // wait for user to start the serial monitor
+//  while ( !Serial.dtr() );                 // wait for user to start the serial monitor
   bootBlink( 6 );
-  delay( 500 );
+  Serial.begin( 115200 );
 }
+
+long t0, t1;
 
 void loop() {
 
   if (scan) {
+    t0 = micros();
     for ( int row = 0; row < ROW; row++ ) {
       // Set row pin as output + 3.3V
       pinMode( rowPins[row], OUTPUT );
       digitalWrite( rowPins[row], HIGH );
       for ( int column = 0; column < COL; column++ ) {
         int value = analogRead( columnPins[column] ); // Read the sensor value
+        // value = log2optim(value);
         int sensorID = row * ROW + column;
         int bytePos = sensorID * 2;
         myPacket[ bytePos ] = lowByte(value);       // Write lowByte
@@ -109,7 +113,9 @@ void loop() {
       // Set row pin in high-impedance state
       pinMode( rowPins[row], INPUT );
     }
-    scan = false;
+    t1 = micros();
+    //scan = false;
+    Serial.println(t1-t0);
   }
 
   // The update() method attempts to read in
@@ -117,7 +123,7 @@ void loop() {
   // the user's onPacket(const uint8_t* buffer, size_t size)
   // method registered with the setPacketHandler() method.
   // The update() method should be called at the end of the loop().
-  serial.update();
+//  serial.update();
 }
 
 // This is our packet callback.
@@ -126,7 +132,7 @@ void onPacket(const uint8_t* buffer, size_t size) {
 
   // The send() method will encode the buffer
   // as a packet, set packet markers, etc.
-  serial.send(myPacket, DATAS);
+//  serial.send(myPacket, DATAS);
   scan = true;
 }
 
