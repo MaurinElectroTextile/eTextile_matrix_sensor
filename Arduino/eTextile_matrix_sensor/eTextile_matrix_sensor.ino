@@ -15,6 +15,7 @@
 */
 
 #include <PacketSerial.h>
+#include "tools.h"
 
 PacketSerial serial;
 
@@ -104,7 +105,7 @@ void loop() {
       digitalWrite( rowPins[row], HIGH );
       for ( int column = 0; column < COL; column++ ) {
         int value = analogRead( columnPins[column] ); // Read the sensor value
-        // value = log2optim(value);
+        value = log2optim(value);
         int sensorID = row * ROW + column;
         int bytePos = sensorID * 2;
         myPacket[ bytePos ] = lowByte(value);       // Write lowByte
