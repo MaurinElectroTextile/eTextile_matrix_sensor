@@ -8,9 +8,9 @@ Also the multiconductors ribbon (16 lignes) do not exist yet as a market product
 #include <cmath>
 #include "ofApp.h"
 
-#define DEBUG_SERIAL 0
+#define DEBUG_SERIAL 1
 #define DEBUG_PRINT 0
-#define DEBUG_OSC 1
+#define DEBUG_OSC 0
 
 void ofApp::setup() {
 
@@ -98,10 +98,12 @@ void ofApp::onSerialBuffer(const SerialBufferEventArgs& args) {
     std::copy(args.getBuffer().begin(), args.getBuffer().end(), serialData);
 
     if (DEBUG_SERIAL) {
-    cout << "NEW packet : ";
+        int peakVal = 0;
         for (int index=0; index<DATAS; index++) {
-            cout << "SENSOR_ID: " << sensorID << " VALUE: " << serialData[index] << endl;
+            if (peakVal < serialData[index])
+                peakVal = serialData[index];
         }
+        cout << peakVal << endl; // max ~240
     }
     device.send(buffer); // Request a frame from the Teensy matrix sensor
     newFrame = true;
