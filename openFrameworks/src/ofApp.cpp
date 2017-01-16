@@ -135,7 +135,7 @@ void ofApp::update() {
         grayDiff.threshold(threshold);
         // Find contours which are between the size of 9 pixels ($1) and 100 pixels ($2).
         // Also, find holes is set to false ($4) so it will not get interior contours.
-        contourFinder.findContours(grayDiff, 9, 300, 8, false, true);
+        contourFinder.findContours(grayDiff, 9, 900, 8, true, true);
 
 
         vector<centroid> currentCentroids;
@@ -288,13 +288,13 @@ void ofApp::draw() {
     ofPushMatrix();
 
     ofTranslate(300, 110);
-    ofRotate(20, 1, 0, 0);
+    //ofRotate(10, 1, 0, 0);
 
     //////////////////////// DRAW BLOBS
     const int x = 0;   // X ofset
     const int y = -50; // Y ofset
     const int kx = 8;      // x scale
-    const int ky = kx*9/10; // y scale
+    const int ky = kx; // y scale
 
     ofNoFill();
     ofSetLineWidth(3);
