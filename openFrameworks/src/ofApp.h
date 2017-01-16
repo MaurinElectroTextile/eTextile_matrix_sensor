@@ -52,6 +52,8 @@ public:
     uint8_t                 storedValueRast[ROWS * COLS];  // 1D array
     int8_t                  threshold;
     bool                    newFrame;
+    bool                    dumpRawData = false;
+    bool                    dumpBlobs = false;
     ofPixels                interpolatedFrame;
     ofxCvGrayscaleImage     grayImage;
     ofxCvGrayscaleImage     grayBg;

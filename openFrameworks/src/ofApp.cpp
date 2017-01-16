@@ -97,13 +97,19 @@ void ofApp::onSerialBuffer(const SerialBufferEventArgs& args) {
     // Copy the frame buffer (256 values) into serialData array.
     std::copy(args.getBuffer().begin(), args.getBuffer().end(), serialData);
 
-    if (DEBUG_SERIAL) {
-        int peakVal = 0;
-        for (int index=0; index<DATAS; index++) {
-            if (peakVal < serialData[index])
-                peakVal = serialData[index];
+    if (DEBUG_SERIAL && dumpRawData) {
+        dumpRawData = false;
+
+        for (int row=0; row<ROWS; row++) {
+
+            for (int col=0; col<COLS; col++) {
+                int index = col + row * ROWS;
+                cout << int(serialData[index]) << "\t";
+            }
+            cout << endl;
+
         }
-        cout << peakVal << endl; // max ~240
+        cout << endl;
     }
     device.send(buffer); // Request a frame from the Teensy matrix sensor
     newFrame = true;
@@ -386,6 +392,9 @@ void ofApp::keyPressed(int key) {
     switch(key) {
         case 'f':
             ofToggleFullscreen();
+            break;
+        case 'd':
+            dumpRawData = true;
             break;
         default:
             break;
