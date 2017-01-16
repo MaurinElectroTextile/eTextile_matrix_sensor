@@ -56,7 +56,7 @@ void ofApp::setup() {
     gui.setup("Parameters");
     gui.add(toggleDsp.setup(" Dsp ", true ));
     gui.add(sliderVolume.setup(" Volume ", 0.8, 0, 1));
-    gui.add(sliderTransposition.setup(" Threshold ", 100, 0, 150));
+    gui.add(sliderTransposition.setup(" Threshold ", 6.75, 0, 30));
     gui.add(buttonModeA.setup(" RAZ "));
 
     ofBackground(0);
