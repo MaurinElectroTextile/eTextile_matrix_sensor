@@ -293,7 +293,7 @@ void ofApp::draw() {
     //////////////////////// DRAW BLOBS
     const int x = 0;   // X ofset
     const int y = -50; // Y ofset
-    const int kx = 16;      // x scale
+    const int kx = 8;      // x scale
     const int ky = kx*9/10; // y scale
 
     ofNoFill();
