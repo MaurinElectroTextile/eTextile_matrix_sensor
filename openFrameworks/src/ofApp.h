@@ -12,8 +12,8 @@
 #define DATAS           256     // numbur of bytes received from the teensy
 #define ROWS            16
 #define COLS            16
-#define X_NEWSIZE       64
-#define Y_NEWSIZE       64
+#define X_NEWSIZE       128
+#define Y_NEWSIZE       128
 
 #define HOST             "localhost"
 //#define HOST           "10.42.0.255"
