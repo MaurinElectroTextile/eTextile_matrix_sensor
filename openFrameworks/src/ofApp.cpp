@@ -144,8 +144,8 @@ void ofApp::update() {
             float posY = contourFinder.blobs[i].centroid.y;    // Get blob posY
             int index = int(posY) * X_NEWSIZE + int(posX);     // Calculate the index
             int posZ = grayImageCopy[index];                   // Get the Z coordinate
-            if (DEBUG_PRINT) {
-                ofLog() << "BlobID: " << int(i) << " posX: " << int(posX) << " posY: " << int(posY) << " posZ: " << posZ << endl;
+            if (dumpBlobs) {
+                cout << int(posX) << "\t" << int(posY) << "\t" << posZ << endl;
             }
             centroid c = {};
             c.position = ofVec2f(posX, posY);
@@ -156,6 +156,10 @@ void ofApp::update() {
             if (DEBUG_PRINT) {
                 ofLog()<<"current frame -> "<<ofToString(i)<<" ["<<c.position<<"]";
             }
+        }
+        if (dumpBlobs) {
+            cout << endl;
+            dumpBlobs = false;
         }
 
         vector<centroid> oldCentroidsToUpdate;
@@ -395,6 +399,7 @@ void ofApp::keyPressed(int key) {
             break;
         case 'd':
             dumpRawData = true;
+            dumpBlobs = true;
             break;
         default:
             break;
