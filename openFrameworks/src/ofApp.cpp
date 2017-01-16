@@ -277,13 +277,14 @@ void ofApp::draw() {
 
     ofPushMatrix();
 
-    ofTranslate(400, 50);
-    //ofRotate(30, 1, 0, 0);
+    ofTranslate(300, 110);
+    ofRotate(20, 1, 0, 0);
 
     //////////////////////// DRAW BLOBS
     const int x = 0;   // X ofset
     const int y = -50; // Y ofset
-    const int k = 10;  // Scale
+    const int kx = 16;      // x scale
+    const int ky = kx*9/10; // y scale
 
     ofNoFill();
     ofSetLineWidth(3);
@@ -293,13 +294,13 @@ void ofApp::draw() {
         blob = contourFinder.blobs[i];
         ofBeginShape();
         for (int i=0; i<blob.nPts; i++) {
-            ofVertex(x+k*blob.pts[i].x, y+k*blob.pts[i].y);
+            ofVertex(x+kx*blob.pts[i].x, y+ky*blob.pts[i].y);
         }
         ofEndShape(true);
     }
 
     ofSetLineWidth(1);    // set line width to 1
-    ofScale(10, 9);
+    ofScale(kx, ky);
 
     mesh.drawWireframe(); // draws lines
 
