@@ -88,9 +88,10 @@ void setup() {
   for (int i = 0; i < ROWS; i++) {
     pinMode(rowPins[ROWS], INPUT);        // Set rows pins in high-impedance state
   }
+
   bootBlink(9);
 
-  // while (!Serial.dtr());                   // wait for user to start the serial monitor
+  while (!Serial.dtr());                   // wait for user to start the serial monitor
   bootBlink(6);
   delay(500);
 }
@@ -145,7 +146,7 @@ void onPacket(const uint8_t* buffer, size_t size) {
 }
 
 /////////// Called with interrupt triggered with push button attached to I/O pin 32
-void  pushButton() {
+void pushButton() {
   cli();
   calibrationCounter = 0;
   calibration = true; // Activate the calibration process

@@ -131,6 +131,7 @@ void ofApp::update() {
 
 
         vector<centroid> currentCentroids;
+
         for (int i=0; i<contourFinder.blobs.size(); i++) {
             float posX = contourFinder.blobs[i].centroid.x;    // Get blob posX
             float posY = contourFinder.blobs[i].centroid.y;    // Get blob posY
@@ -159,6 +160,7 @@ void ofApp::update() {
         ofxOscBundle bundle;
         ofxOscMessage message;
         message.setAddress("/sensors");
+
         for(int i = 0; i < currentCentroids.size(); i++ ) {
             float minDist = 1000;
             int nearestIndex = -1;
@@ -194,6 +196,7 @@ void ofApp::update() {
 
         vector<centroid> centroidsToRemove;
         vector<int> indexesToRemove;
+
         for(int j = 0; j < centroids.size(); j++) {
             bool found = false;
             for(int i = 0; i < centroidsToUpdate.size(); i++) {
