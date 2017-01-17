@@ -68,8 +68,8 @@ const int columnPins[COLS] = {
   A17, A18, A19, A0, A20, A1, A2, A3, A4, A5, A6, A7, A11, A8, A10, A9
 };
 
-int minVal[DATAS];
-uint8_t myPacket[DATAS];
+int minVal[DATAS] = {0};
+uint8_t myPacket[DATAS] = {0};
 
 boolean scan = true;
 boolean calibration = true;
