@@ -10,7 +10,7 @@ Also the multiconductors ribbon (16 lignes) do not exist yet as a market product
 
 #define DEBUG_SERIAL 0
 #define DEBUG_PRINT 0
-#define DEBUG_OSC 1
+#define DEBUG_OSC 0
 
 void ofApp::setup() {
 
@@ -148,7 +148,7 @@ void ofApp::update() {
             c.isDead = false;
             currentCentroids.push_back(c);
             if (DEBUG_PRINT) {
-                ofLog()<<"current frame -> "<<ofToString(i)<<" ["<<c.position<<"]";
+                ofLog() << "current frame -> " << ofToString(i) << " [" << c.position << "]";
             }
         }
 
@@ -226,8 +226,6 @@ void ofApp::update() {
             }
             if(index != -1) {
                centroids.erase(centroids.begin() + index);
-               // Add OSC erase flag -1
-               centroids[index].pressure = -1;
             }
             else {
                 deadExists = false;
