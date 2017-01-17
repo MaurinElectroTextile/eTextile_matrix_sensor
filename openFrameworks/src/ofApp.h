@@ -24,6 +24,7 @@ struct centroid
 {
     ofVec2f position;
     uint8_t pressure;
+    float perimeter;
     int UID;
     bool isDead;
 };
