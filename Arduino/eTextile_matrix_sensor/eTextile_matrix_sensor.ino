@@ -15,7 +15,6 @@
 */
 
 #include <PacketSerial.h>
-// #include "tools.h"
 
 PacketSerial serial;
 
