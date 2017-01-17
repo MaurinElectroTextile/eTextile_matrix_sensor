@@ -39,7 +39,7 @@ PacketSerial serial;
   THE SOFTWARE.
 */
 
-// The PacketSerialsqrt object.
+// The PacketSerial object.
 // It cleverly wraps one of the Serial objects.
 // While it is still possible to use the Serial object
 // directly, it is recommended that the user let the
