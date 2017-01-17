@@ -134,6 +134,7 @@ void ofApp::update() {
         for (int i=0; i<contourFinder.blobs.size(); i++) {
             float posX = contourFinder.blobs[i].centroid.x;    // Get blob posX
             float posY = contourFinder.blobs[i].centroid.y;    // Get blob posY
+            float blobPerimeter = contourFinder.blobs[i].length;
             int index = int(posY) * X_NEWSIZE + int(posX);     // Calculate the index
             int posZ = grayImageCopy[index];                   // Get the Z coordinate
             if (DEBUG_PRINT) {
@@ -142,6 +143,7 @@ void ofApp::update() {
             centroid c = {};
             c.position = ofVec2f(posX, posY);
             c.pressure = posZ;
+            c.perimeter = blobPerimeter;
             c.UID = i;
             c.isDead = false;
             currentCentroids.push_back(c);
@@ -199,6 +201,7 @@ void ofApp::update() {
                     found = true;
                     centroids[j].position = centroidsToUpdate[i].position;
                     centroids[j].pressure = centroidsToUpdate[i].pressure;
+                    centroids[j].perimeter = centroidsToUpdate[i].perimeter;
                 }
             }
             if (!found) {
@@ -239,12 +242,18 @@ void ofApp::update() {
                 message.addIntArg(centroids[i].UID);
                 message.addIntArg(centroids[i].position.x);
                 message.addIntArg(centroids[i].position.y);
+                message.addIntArg((int)centroids[i].perimeter);
                 message.addIntArg(centroids[i].pressure);
                 bundle.addMessage(message);
                 if (DEBUG_OSC) {
-                    cout << "BlobID: "<<centroids[i].UID<< " posX: " << centroids[i].position.x << " posY: " << centroids[i].position.y << " posZ: " << (int)centroids[i].pressure << endl;
-                  }
-                sender.sendMessage(message, false);
+                    cout <<
+                        "BlobID: " << centroids[i].UID <<
+                        " posX: " << centroids[i].position.x <<
+                        " posY: " << centroids[i].position.y <<
+                        " perimeter: " << centroids[i].perimeter <<
+                        " posZ: " << (int)centroids[i].pressure <<
+                    endl;
+                }
             }
         }
         sender.sendBundle(bundle);
