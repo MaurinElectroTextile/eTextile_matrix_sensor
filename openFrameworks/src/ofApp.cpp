@@ -154,6 +154,9 @@ void ofApp::update() {
         vector<centroid> centroidsToUpdate;
         vector<centroid> centroidsToAdd;
 
+        ofxOscBundle bundle;
+        ofxOscMessage message;
+        message.setAddress("/sensors");
         for(int i = 0; i < currentCentroids.size(); i++ ) {
             float minDist = 1000;
             int nearestIndex = -1;
@@ -200,6 +203,12 @@ void ofApp::update() {
             }
             if (!found) {
                 centroids[j].isDead = true;
+                message.addIntArg(centroids[j].UID);
+                message.addIntArg(-1);
+                message.addIntArg(-1);
+                message.addIntArg(-1);
+                message.addIntArg(-1);
+                bundle.addMessage(message);
             }
         }
 
@@ -227,18 +236,18 @@ void ofApp::update() {
         }
         for(int i = 0; i < centroids.size(); i++) {
             if(!centroids[i].isDead) {
-                ofxOscMessage message;
-                message.setAddress("/sensor");
                 message.addIntArg(centroids[i].UID);
                 message.addIntArg(centroids[i].position.x);
                 message.addIntArg(centroids[i].position.y);
                 message.addIntArg(centroids[i].pressure);
+                bundle.addMessage(message);
                 if (DEBUG_OSC) {
                     cout << "BlobID: "<<centroids[i].UID<< " posX: " << centroids[i].position.x << " posY: " << centroids[i].position.y << " posZ: " << (int)centroids[i].pressure << endl;
                   }
                 sender.sendMessage(message, false);
             }
         }
+        sender.sendBundle(bundle);
     }
 
     //////// Change vertices by the matrix sensors values
