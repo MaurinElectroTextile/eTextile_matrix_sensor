@@ -50,14 +50,12 @@ void ofApp::setup() {
     receiver.setup(UDP_INPUT_PORT);
     toggleDsp.addListener(this, &ofApp::toggleDspPressed);
     sliderVolume.addListener(this, &ofApp::sliderVolumeValue);
-    sliderTransposition.addListener(this, &ofApp::sliderTranspositionValue);
-    buttonModeA.addListener(this, &ofApp::buttonModePressedA);
+    sliderTreshold.addListener(this, &ofApp::sliderTresholdValue);
 
     gui.setup("Parameters");
     gui.add(toggleDsp.setup(" Dsp ", true ));
-    gui.add(sliderVolume.setup(" Volume ", 0.8, 0, 1));
-    gui.add(sliderTransposition.setup(" Threshold ", 100, 0, 150));
-    gui.add(buttonModeA.setup(" RAZ "));
+    gui.add(sliderVolume.setup(" Volume ", 170, 0, 180));
+    gui.add(sliderTreshold.setup(" Threshold ", 15, 0, 150));
 
     ofBackground(0);
 
@@ -125,14 +123,14 @@ void ofApp::update() {
         // Take the abs value of the difference between background and incoming and then threshold:
         grayDiff.absDiff(grayBg, grayImage);
         grayDiff.threshold(threshold);
-        // Find contours which are between the size of 9 pixels ($1) and 100 pixels ($2).
+        // Find contours which are between the size of 9 pixels ($1) and 500 pixels ($2).
         // Also, find holes is set to false ($4) so it will not get interior contours.
-        contourFinder.findContours(grayDiff, 9, 300, 8, false, true);
+        contourFinder.findContours(grayDiff, 9, 500, 8, false, true);
 
 
         vector<centroid> currentCentroids;
 
-        for (int i=0; i<contourFinder.blobs.size(); i++) {
+        for (uint32_t i=0; i<contourFinder.blobs.size(); i++) {
             float posX = contourFinder.blobs[i].centroid.x;    // Get blob posX
             float posY = contourFinder.blobs[i].centroid.y;    // Get blob posY
             float blobPerimeter = contourFinder.blobs[i].length;
@@ -161,10 +159,10 @@ void ofApp::update() {
         ofxOscMessage message;
         message.setAddress("/sensors");
 
-        for(int i = 0; i < currentCentroids.size(); i++ ) {
+        for(uint32_t i = 0; i < currentCentroids.size(); i++ ) {
             float minDist = 1000;
             int nearestIndex = -1;
-            for(int j = 0; j < centroids.size(); j++) {
+            for(uint32_t j = 0; j < centroids.size(); j++) {
                 float dist = centroids[j].position.distance(currentCentroids[i].position);
                 if(dist < minDist) {
                     minDist = dist;
@@ -180,7 +178,7 @@ void ofApp::update() {
                 int minID = 0;
                 while (!reachEnd) {
                     reachEnd = true;
-                    for(int j = 0; j < centroids.size(); j++) {
+                    for(uint32_t j = 0; j < centroids.size(); j++) {
                         if(centroids[j].UID == minID) {
                             minID ++;
                             reachEnd = false;
@@ -197,9 +195,9 @@ void ofApp::update() {
         vector<centroid> centroidsToRemove;
         vector<int> indexesToRemove;
 
-        for(int j = 0; j < centroids.size(); j++) {
+        for(uint32_t j = 0; j < centroids.size(); j++) {
             bool found = false;
-            for(int i = 0; i < centroidsToUpdate.size(); i++) {
+            for(uint32_t i = 0; i < centroidsToUpdate.size(); i++) {
                 if(oldCentroidsToUpdate[i].UID == centroids[j].UID) {
                     found = true;
                     centroids[j].position = centroidsToUpdate[i].position;
@@ -221,7 +219,7 @@ void ofApp::update() {
         bool deadExists = true;
         while(deadExists) {
             int index = -1;
-            for(int i = 0; i < centroids.size(); i++) {
+            for(uint32_t i = 0; i < centroids.size(); i++) {
                 if(centroids[i].isDead) {
                     index = i;
                     break;
@@ -235,24 +233,24 @@ void ofApp::update() {
             }
         }
 
-        for(int i = 0; i < centroidsToAdd.size(); i++ ) {
+        for(uint32_t i = 0; i < centroidsToAdd.size(); i++ ) {
             centroids.push_back(centroidsToAdd[i]);
         }
-        for(int i = 0; i < centroids.size(); i++) {
+        for(uint32_t i = 0; i < centroids.size(); i++) {
             if(!centroids[i].isDead) {
                 message.addIntArg(centroids[i].UID);
                 message.addIntArg(centroids[i].position.x);
                 message.addIntArg(centroids[i].position.y);
-                message.addIntArg((int)centroids[i].perimeter);
-                message.addIntArg(centroids[i].pressure);
+                message.addFloatArg(centroids[i].pressure);
+                message.addFloatArg(centroids[i].perimeter);
                 bundle.addMessage(message);
                 if (DEBUG_OSC) {
                     cout <<
-                        "BlobID: " << centroids[i].UID <<
-                        " posX: " << centroids[i].position.x <<
-                        " posY: " << centroids[i].position.y <<
-                        " perimeter: " << centroids[i].perimeter <<
-                        " posZ: " << (int)centroids[i].pressure <<
+                        "    BlobID : " << centroids[i].UID <<
+                        "      posX : " << centroids[i].position.x <<
+                        "      posY : " << centroids[i].position.y <<
+                        "      posZ : " << (int)centroids[i].pressure <<
+                        " perimeter : " << (int)centroids[i].perimeter <<
                     endl;
                 }
             }
@@ -294,13 +292,13 @@ void ofApp::draw() {
 
     ofPushMatrix();
 
-    ofTranslate(400, 50);
-    //ofRotate(30, 1, 0, 0);
+    ofTranslate(360, 99);
+    ofRotate(25, 1, 0, 0);
 
     //////////////////////// DRAW BLOBS
     const int x = 0;   // X ofset
-    const int y = -50; // Y ofset
-    const int k = 10;  // Scale
+    const int y = 0; // Y ofset FIXME : dont afect the matrix graph
+    const int k = 9;  // Scale 14
 
     ofNoFill();
     ofSetLineWidth(3);
@@ -316,13 +314,13 @@ void ofApp::draw() {
     }
 
     ofSetLineWidth(1);    // set line width to 1
-    ofScale(10, 9);
+    ofScale(k, k);
 
     mesh.drawWireframe(); // draws lines
 
     //////////////////////// DRAW CENTROIDS
     ofSetColor(255);
-    for(int i = 0; i < centroids.size(); i++) {
+    for(uint32_t i = 0; i < centroids.size(); i++) {
         if( !centroids[i].isDead ) {
             ofDrawBitmapString(ofToString(centroids[i].UID), centroids[i].position);
         }
@@ -364,8 +362,7 @@ void ofApp::exit() {
     device.unregisterAllEvents(this);
     toggleDsp.removeListener(this, &ofApp::toggleDspPressed);
     sliderVolume.removeListener(this, &ofApp::sliderVolumeValue);
-    sliderTransposition.removeListener(this, &ofApp::sliderTranspositionValue);
-    buttonModeA.removeListener(this, &ofApp::buttonModePressedA);
+    sliderTreshold.removeListener(this, &ofApp::sliderTresholdValue);
 }
 
 //--------------------------------------------------------------
@@ -388,13 +385,12 @@ void ofApp::sliderVolumeValue(float & sliderValue_A) {
     sender.sendMessage(message);
 }
 //--------------------------------------------------------------
-void ofApp::sliderTranspositionValue(float & sliderValue_B) {
+void ofApp::sliderTresholdValue(float & sliderValue_B) {
     threshold = sliderValue_B;
-}
-//--------------------------------------------------------------
-void ofApp::buttonModePressedA() {
-    bLearnBakground = true;
-    centroids.clear();
+    ofxOscMessage message;
+    message.setAddress("/threshold");
+    message.addFloatArg(sliderValue_B);
+    sender.sendMessage(message);
 }
 
 //--------------------------------------------------------------
