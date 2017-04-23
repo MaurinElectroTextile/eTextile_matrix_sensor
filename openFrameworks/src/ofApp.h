@@ -63,16 +63,12 @@ public:
     ofPixels                grayImageCopy;
     void                    toggleDspPressed(bool & toggleState);
     void                    sliderVolumeValue(float & sliderValue_A);
-    void                    sliderTranspositionValue(float & sliderValue_B);
-    void                    buttonModePressedA();
+    void                    sliderTresholdValue(float & sliderValue_B);
 	void                    keyPressed(int key);
     ofxPanel                gui;
-    ofxToggle               toggleDsp;      // Switch DSP ON/OFF
-    ofxFloatSlider          sliderVolume;   // Set the audio volume
-    ofxFloatSlider          sliderTransposition;   // Set the audio volume
-    ofxButton               buttonModeA;    // Select audio mode
-    ofxButton               buttonModeB;    // Select audio mode
-    ofxButton               buttonModeC;    // Select audio mode
+    ofxToggle               toggleDsp;         // DSP switch
+    ofxFloatSlider          sliderVolume;      // Audio volume
+    ofxFloatSlider          sliderTreshold;    // Threshold
     ofMesh                  mesh;
     ofxOscSender            sender;
     ofxOscReceiver          receiver;
